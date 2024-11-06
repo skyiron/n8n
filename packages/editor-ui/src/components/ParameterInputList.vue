@@ -520,16 +520,6 @@ function getParameterValue<T extends NodeParameterValueType = NodeParameterValue
 				v-else-if="['collection', 'fixedCollection'].includes(parameter.type)"
 				class="multi-parameter"
 			>
-				<N8nIconButton
-					v-if="hideDelete !== true && !isReadOnly && !parameter.isNodeSetting"
-					type="tertiary"
-					text
-					size="mini"
-					icon="trash"
-					class="delete-option"
-					:title="$locale.baseText('parameterInputList.delete')"
-					@click="deleteOption(parameter.name)"
-				></N8nIconButton>
 				<N8nInputLabel
 					:label="$locale.nodeText().inputLabelDisplayName(parameter, path)"
 					:tooltip-text="$locale.nodeText().inputLabelDescription(parameter, path)"
@@ -569,6 +559,16 @@ function getParameterValue<T extends NodeParameterValueType = NodeParameterValue
 					<N8nIcon icon="exclamation-triangle" size="xsmall" />
 					{{ $locale.baseText('parameterInputList.loadingError') }}
 				</N8nText>
+				<N8nIconButton
+					v-if="hideDelete !== true && !isReadOnly && !parameter.isNodeSetting"
+					type="tertiary"
+					text
+					size="mini"
+					icon="trash"
+					class="delete-option"
+					:title="$locale.baseText('parameterInputList.delete')"
+					@click="deleteOption(parameter.name)"
+				></N8nIconButton>
 			</div>
 			<ResourceMapper
 				v-else-if="parameter.type === 'resourceMapper'"
@@ -636,12 +636,25 @@ function getParameterValue<T extends NodeParameterValueType = NodeParameterValue
 
 <style lang="scss">
 .parameter-input-list-wrapper {
+	.drag-option {
+		position: absolute;
+		opacity: 0;
+		top: 28px;
+		left: calc(-1 * var(--spacing-2xs));
+		transition: opacity 100ms ease-in;
+		color: var(--color-icon-base);
+	}
 	.delete-option {
 		position: absolute;
 		opacity: 0;
-		top: 0;
-		left: calc(-1 * var(--spacing-2xs));
+		top: 28px;
+		right: calc(-1 * var(--spacing-2xs));
 		transition: opacity 100ms ease-in;
+		color: var(--color-icon-base);
+	}
+	.drag-option > Button:hover,
+	.delete-option > Button:hover {
+		color: var(--color-primary);
 	}
 
 	.indent > div {
@@ -660,7 +673,10 @@ function getParameterValue<T extends NodeParameterValueType = NodeParameterValue
 	.parameter-item {
 		position: relative;
 		margin: var(--spacing-xs) 0;
+		width: calc(100% - 28px);
 	}
+	.parameter-item:hover > .drag-option,
+	.multi-parameter:hover > .drag-option,
 	.parameter-item:hover > .delete-option,
 	.multi-parameter:hover > .delete-option {
 		opacity: 1;
